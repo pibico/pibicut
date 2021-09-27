@@ -75,7 +75,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "published",
- "modified": "2021-09-27 19:11:49.247602",
+ "modified": "2021-09-27 20:34:03.199397",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
@@ -90,6 +90,17 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
    "share": 1,
    "write": 1
   }
