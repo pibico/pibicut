@@ -1,0 +1,4 @@
+frappe
+qrcode
+pillow
+six

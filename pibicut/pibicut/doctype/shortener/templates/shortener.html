@@ -1,0 +1,17 @@
+{% extends "templates/web.html" %}
+
+{% block head %}
+  <script type="text/javascript">
+    window.location.replace("{{ long_url }}");
+  </script>
+{% endblock %}
+
+{% block page_content %}
+  <div class="row">
+    <span>
+       <p>Redirecting to</p><a href='{{ long_url }}' style="color:#4682b4;"> {{ long_url }}</a>
+    </span>
+  </div> 
+{% endblock %}
+
+<!-- this is a sample default web page template -->
