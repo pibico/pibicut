@@ -41,5 +41,5 @@ As a result of saving the 'Shortener' Doctype, you will have a shorten url in th
 ![imagen](https://user-images.githubusercontent.com/69711454/134967286-d24c40f3-dfdb-457a-a1bf-0f0ae3deb054.png)
 
 ## Future Development
-Future improvements can be related to QR Code variations taking into consideration the libraries possibilities. Random Short URL is considering random strings with 5 characters, but this can be changed directly in the code. Enjoy this very simple app! 
+Future improvements can be related to QR Code variations taking into consideration the libraries possibilities. Current Generated Short URL is considering random strings with 5 characters, but this can be changed directly in the code. Enjoy this very simple app! 
 
