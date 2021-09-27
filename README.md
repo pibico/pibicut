@@ -36,7 +36,7 @@ $ bench update --requirements
 ## Features
 Once installed, a new doctype 'Shortener' is generated. On searching the 'Shortener' Doctype you'll enter into the list of created shorten urls. You can create a new one, just click on New and enter the destination long URL. If you want, you can also insert a centered picture on the QR Code (the image must be in PNG format and white background, not transparent).
 
-As a result of saving the 'Shortener' Doctype, you will have a shorten url in the way http or https://site_name/MnOpQ. If you browse to this short url you will be redirected to the long url, the same is produced if you read the generated QR Code. Just try into the QR Code in the following picture.
+As a result of saving the 'Shortener' Doctype, you will have a shorten url in the way http or https://site_name/MnOpQ. If you browse to this short url you will be redirected to the long url, the same is produced if you read the generated QR Code. Just try reading the QR Code in the following picture.
 
 ![imagen](https://user-images.githubusercontent.com/69711454/134967286-d24c40f3-dfdb-457a-a1bf-0f0ae3deb054.png)
 
