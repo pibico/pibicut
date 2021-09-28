@@ -38,7 +38,7 @@ Once installed, a new doctype 'Shortener' is generated. On searching the 'Shorte
 
 As a result of saving the 'Shortener' Doctype, you will have a shorten url in the way http or https://site_name/MnOpQ. If you browse to this short url you will be redirected to the long url, the same is produced if you read the generated QR Code. Just try reading the QR Code in the following picture.
 
-![imagen](https://user-images.githubusercontent.com/69711454/134967286-d24c40f3-dfdb-457a-a1bf-0f0ae3deb054.png)
+![imagen](https://user-images.githubusercontent.com/69711454/135119978-16015a88-b759-4848-8f58-eda8b05bd4cc.png)
 
 ## Future Development
 Future improvements can be related to QR Code variations taking into consideration the libraries possibilities. Current Generated Short URL is considering random strings with 5 characters, but this can be changed directly in the code. Enjoy this very simple app! 
