@@ -1,5 +1,7 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
+ "allow_rename": 1,
  "creation": "2021-09-27 18:33:11.155323",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -37,7 +39,6 @@
    "fieldtype": "Data",
    "label": "Short URL",
    "length": 15,
-   "read_only": 1,
    "unique": 1
   },
   {
@@ -58,9 +59,7 @@
   {
    "fieldname": "qr_code",
    "fieldtype": "Attach Image",
-   "hidden": 1,
-   "label": "QR Code",
-   "read_only": 1
+   "label": "QR Code"
   },
   {
    "fieldname": "qr_preview",
@@ -75,7 +74,8 @@
  ],
  "has_web_view": 1,
  "is_published_field": "published",
- "modified": "2021-09-27 20:34:03.199397",
+ "links": [],
+ "modified": "2021-10-18 16:12:50.830543",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
