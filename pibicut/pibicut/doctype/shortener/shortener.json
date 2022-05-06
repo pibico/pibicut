@@ -25,11 +25,14 @@
   },
   {
    "fieldname": "long_url",
-   "fieldtype": "Text",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
    "label": "Long URL",
-   "options": "URL"
+   "options": "URL",
+   "reqd": 1
   },
   {
+   "default": "/files/pibiCo_Corto_fondo_blanco.png",
    "fieldname": "logo",
    "fieldtype": "Attach Image",
    "label": "Logo"
@@ -75,7 +78,7 @@
  "has_web_view": 1,
  "is_published_field": "published",
  "links": [],
- "modified": "2022-04-17 16:13:04.565118",
+ "modified": "2022-05-06 16:34:03.902800",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
