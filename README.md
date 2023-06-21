@@ -10,7 +10,7 @@ MIT# PibiCut
 Requires a Frappe server instance (refer to https://github.com/frappe/frappe), and has dependencies on QR Code (refer to https://github.com/lincolnloop/python-qrcode).
 
 ## Compatibility
-PibiCut has been tested on Frappe/ERPNext version-12 and version-13 as well.
+PibiCut has been tested on Frappe/ERPNext version-12, version-13 and version-14 as well.
 
 ## Installation
 From the frappe-bench folder, execute
