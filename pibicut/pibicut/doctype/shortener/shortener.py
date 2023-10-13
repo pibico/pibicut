@@ -15,12 +15,15 @@ class Shortener(WebsiteGenerator):
   def autoname(self):
     # select a project name based on customer
     random_code = random_string(5)
-    doc = frappe.get_value("Shortener", {"short_url": random_code}, "name")
+    doc = frappe.get_value("Shortener", {"route": random_code}, "name")
     if doc:
       frappe.throw(_("Try again, generated code is repeated on ") + doc.name)
     else:
       self.name = random_code
-      self.short_url = self.name
+
+  @property
+  def short_url(self):
+      return get_url(self.name)
     
   def validate(self):
     if not "http" in self.long_url:
@@ -42,4 +45,3 @@ class Shortener(WebsiteGenerator):
     self.qr_code = get_qrcode(qr_code, logo)
     self.published = True
     self.route = url_short
-    #self.short_url = self.name
