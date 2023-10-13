@@ -1,4 +1,0 @@
-frappe
-qrcode
-pillow
-six
