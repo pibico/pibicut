@@ -23,8 +23,8 @@ class Shortener(WebsiteGenerator):
       self.short_url = self.name
     
   def validate(self):
-    if not "http" in self.long_url:
-      frappe.throw(_("Please enter a proper URL"))
+    if not (self.long_url.startswith("http") or self.long_url.startswith("upi")):
+      frappe.throw(_("Please enter a proper URL or UPI"))
       
   def before_save(self):
     url_short = "".join([self.name])
