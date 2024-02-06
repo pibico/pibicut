@@ -15,12 +15,15 @@ class Shortener(WebsiteGenerator):
   def autoname(self):
     # select a project name based on customer
     random_code = random_string(5)
-    doc = frappe.get_value("Shortener", {"short_url": random_code}, "name")
+    doc = frappe.get_value("Shortener", {"route": random_code}, "name")
     if doc:
       frappe.throw(_("Try again, generated code is repeated on ") + doc.name)
     else:
       self.name = random_code
-      self.short_url = self.name
+
+  @property
+  def short_url(self):
+      return get_url(self.name)
     
   def validate(self):
     if not (self.long_url.startswith("http") or self.long_url.startswith("upi")):
@@ -29,7 +32,16 @@ class Shortener(WebsiteGenerator):
   def before_save(self):
     url_short = "".join([self.name])
     qr_code = get_url(url_short)
-    self.qr_code = get_qrcode(qr_code, self.logo)
+    logo_files = frappe.get_all("File",
+        fields=["name", "file_name", "file_url", "is_private"],
+        filters={"attached_to_name": self.name, "attached_to_field": "logo",  "attached_to_doctype": "Shortener"},
+    )
+    logo = None
+    if logo_files:
+        print(logo_files)
+        print(frappe.local.sites_path)
+        logo = frappe.utils.get_files_path(logo_files[0].file_name, is_private=logo_files[0].is_private)
+
+    self.qr_code = get_qrcode(qr_code, logo)
     self.published = True
     self.route = url_short
-    #self.short_url = self.name

@@ -8,9 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "sb_01",
+  "short_url",
   "long_url",
   "logo",
-  "short_url",
   "route",
   "published",
   "cb_01",
@@ -40,9 +40,9 @@
   {
    "fieldname": "short_url",
    "fieldtype": "Data",
+   "is_virtual": 1,
    "label": "Short URL",
-   "length": 15,
-   "unique": 1
+   "length": 50
   },
   {
    "fieldname": "route",
@@ -67,6 +67,8 @@
   {
    "fieldname": "qr_preview",
    "fieldtype": "HTML",
+   "hidden": 1,
+   "in_preview": 1,
    "label": "QR Preview",
    "read_only": 1
   },
@@ -76,9 +78,10 @@
   }
  ],
  "has_web_view": 1,
+ "image_field": "qr_code",
  "is_published_field": "published",
  "links": [],
- "modified": "2022-05-06 16:34:03.902800",
+ "modified": "2023-10-13 07:19:30.974951",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
@@ -109,7 +112,9 @@
   }
  ],
  "quick_entry": 1,
+ "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1
+ "states": [],
+ "title_field": "short_url"
 }
