@@ -32,9 +32,8 @@
    "reqd": 1
   },
   {
-   "default": "/files/pibiCo_Corto_fondo_blanco.png",
    "fieldname": "logo",
-   "fieldtype": "Attach Image",
+   "fieldtype": "Attach",
    "label": "Logo"
   },
   {
@@ -81,7 +80,7 @@
  "image_field": "qr_code",
  "is_published_field": "published",
  "links": [],
- "modified": "2023-10-13 07:19:30.974951",
+ "modified": "2024-03-13 21:15:22.178826",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
