@@ -90,7 +90,14 @@ class Shortener(WebsiteGenerator):
             doc.qr_code = get_qrcode(get_url(new_name), None, doc.qr_size or "Medium")
             doc.db_update()
 
-            frappe.msgprint(_("Short URL renamed to: {0}").format(get_url(new_name)))
+            # Notify client about the rename for redirect
+            frappe.local.response["new_name"] = new_name
+
+            frappe.msgprint(
+                _("Short URL renamed to: {0}. Redirecting...").format(get_url(new_name)),
+                title=_("Renamed"),
+                indicator="green"
+            )
 
     def get_context(self, context):
         """Handle redirect with click tracking and expiration check."""

@@ -137,6 +137,9 @@ frappe.ui.form.on('Shortener', {
         // Check custom code availability
         if (!frm.doc.custom_code) return;
 
+        // Skip check if custom_code matches current name (already set)
+        if (frm.doc.custom_code === frm.doc.name) return;
+
         // Validate format first
         let code = frm.doc.custom_code;
         if (!/^[a-zA-Z0-9\-]{3,20}$/.test(code)) {
@@ -165,5 +168,15 @@ frappe.ui.form.on('Shortener', {
                 }
             }
         });
+    },
+
+    after_save(frm) {
+        // Check if document was renamed (custom_code differs from current name)
+        if (frm.doc.custom_code && frm.doc.custom_code !== frm.doc.name) {
+            // Redirect to the new document after a short delay
+            setTimeout(() => {
+                frappe.set_route('Form', 'Shortener', frm.doc.custom_code);
+            }, 1500);
+        }
     }
 });
