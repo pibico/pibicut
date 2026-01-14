@@ -87,7 +87,25 @@ class Shortener(WebsiteGenerator):
             # Update route and QR code with new name
             doc = frappe.get_doc("Shortener", new_name)
             doc.route = new_name
-            doc.qr_code = get_qrcode(get_url(new_name), None, doc.qr_size or "Medium")
+
+            # Get logo if attached (files are automatically renamed with document)
+            logo_files = frappe.get_all("File",
+                fields=["name", "file_name", "file_url", "is_private"],
+                filters={
+                    "attached_to_name": new_name,
+                    "attached_to_field": "logo",
+                    "attached_to_doctype": "Shortener"
+                },
+            )
+            logo = None
+            if logo_files:
+                logo = frappe.utils.get_files_path(
+                    logo_files[0].file_name,
+                    is_private=logo_files[0].is_private
+                )
+
+            # Regenerate QR code with logo
+            doc.qr_code = get_qrcode(get_url(new_name), logo, doc.qr_size or "Medium")
             doc.db_update()
 
             # Notify client about the rename for redirect
