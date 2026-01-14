@@ -86,3 +86,55 @@ def get_qrcode(input_data, logo=None, size="Medium"):
     temp.seek(0)
     b64 = base64.b64encode(temp.read())
     return "data:image/png;base64,{0}".format(b64.decode("utf-8"))
+
+
+def get_qrcode_binary(input_data, logo=None, size="Medium"):
+    """
+    Generate a styled QR code and return as binary PNG data.
+
+    Args:
+        input_data: The data to encode in the QR code
+        logo: Optional path to logo image to embed
+        size: Size option - "Small", "Medium", or "Large"
+
+    Returns:
+        Binary PNG image data
+    """
+    # Get size configuration
+    config = SIZE_CONFIG.get(size, SIZE_CONFIG["Medium"])
+
+    qr = qrcode.QRCode(
+        version=config["version"],
+        box_size=config["box_size"],
+        border=3
+    )
+    qr.add_data(input_data)
+    qr.make(fit=True)
+
+    # Color mask settings
+    color_mask = RadialGradiantColorMask(
+        back_color=(255, 255, 255),
+        center_color=(70, 130, 180),
+        edge_color=(0, 0, 0)
+    )
+
+    if logo:
+        img = qr.make_image(
+            image_factory=StyledPilImage,
+            color_mask=color_mask,
+            module_drawer=GappedSquareModuleDrawer(),
+            eye_drawer=SquareModuleDrawer(),
+            embeded_image_path=logo
+        )
+    else:
+        img = qr.make_image(
+            image_factory=StyledPilImage,
+            color_mask=color_mask,
+            module_drawer=GappedSquareModuleDrawer(),
+            eye_drawer=SquareModuleDrawer()
+        )
+
+    temp = BytesIO()
+    img.save(temp, "PNG")
+    temp.seek(0)
+    return temp.read()

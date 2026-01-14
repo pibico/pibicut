@@ -11,6 +11,78 @@ from io import BytesIO
 import json
 
 from pibicut.pibicut.custom import get_qrcode_binary
+import re
+import requests
+
+
+@frappe.whitelist()
+def check_custom_code(code):
+    """
+    Check if a custom short code is available.
+
+    Args:
+        code (str): The custom code to check
+
+    Returns:
+        dict: Contains 'available' boolean and 'message' string
+    """
+    if not code:
+        return {"available": False, "message": _("Code cannot be empty")}
+
+    # Validate format
+    if not re.match(r'^[a-zA-Z0-9\-]{3,20}$', code):
+        return {
+            "available": False,
+            "message": _("Code must be 3-20 characters, using only letters, numbers, and hyphens")
+        }
+
+    # Check if exists
+    exists = frappe.db.exists("Shortener", code)
+
+    if exists:
+        return {"available": False, "message": _("This code is already taken")}
+
+    return {"available": True, "message": _("Code is available")}
+
+
+@frappe.whitelist()
+def validate_url(url):
+    """
+    Validate a URL format and optionally check if it's reachable.
+
+    Args:
+        url (str): The URL to validate
+
+    Returns:
+        dict: Contains 'valid' boolean and 'message' string
+    """
+    if not url:
+        return {"valid": False, "message": _("URL cannot be empty")}
+
+    # Check URL format
+    if not (url.startswith("http://") or url.startswith("https://") or url.startswith("upi://")):
+        return {"valid": False, "message": _("URL must start with http://, https://, or upi://")}
+
+    # For UPI URLs, just check format
+    if url.startswith("upi://"):
+        return {"valid": True, "message": _("Valid UPI URL")}
+
+    # Try to reach the URL (with timeout)
+    try:
+        response = requests.head(url, timeout=5, allow_redirects=True)
+        if response.status_code < 400:
+            return {"valid": True, "message": _("Valid URL")}
+        else:
+            return {
+                "valid": True,
+                "message": _("URL format valid (server returned {0})").format(response.status_code)
+            }
+    except requests.exceptions.Timeout:
+        return {"valid": True, "message": _("Valid URL format (server timeout)")}
+    except requests.exceptions.ConnectionError:
+        return {"valid": True, "message": _("Valid URL format (connection failed)")}
+    except Exception:
+        return {"valid": True, "message": _("Valid URL format")}
 
 
 @frappe.whitelist()
