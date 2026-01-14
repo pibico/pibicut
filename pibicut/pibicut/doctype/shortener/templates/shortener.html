@@ -1,17 +1,35 @@
 {% extends "templates/web.html" %}
 
 {% block head %}
+  {% if not expired %}
   <script type="text/javascript">
-    window.location.replace("{{ long_url }}");
+    window.location.replace("{{ redirect_url }}");
   </script>
+  {% endif %}
 {% endblock %}
 
 {% block page_content %}
   <div class="row">
+    {% if expired %}
+    <div class="col-12 text-center" style="padding: 50px 20px;">
+      <div style="font-size: 64px; color: #dc3545; margin-bottom: 20px;">
+        <i class="fa fa-clock-o"></i>
+      </div>
+      <h2 style="color: #dc3545; margin-bottom: 15px;">Link Expired</h2>
+      <p style="color: #666; font-size: 16px;">
+        This shortened link has expired and is no longer available.
+      </p>
+      <a href="/" class="btn btn-primary" style="margin-top: 20px;">
+        Go to Homepage
+      </a>
+    </div>
+    {% else %}
     <span>
-       <p>Redirecting to</p><a href='{{ long_url }}' style="color:#4682b4;"> {{ long_url }}</a>
+       <p>Redirecting to</p>
+       <a href='{{ redirect_url }}' style="color:#4682b4;"> {{ redirect_url }}</a>
     </span>
-  </div> 
+    {% endif %}
+  </div>
 {% endblock %}
 
 <!-- this is a sample default web page template -->

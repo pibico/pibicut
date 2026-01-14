@@ -8,14 +8,28 @@
  "engine": "InnoDB",
  "field_order": [
   "sb_01",
-  "short_url",
   "long_url",
-  "logo",
-  "route",
-  "published",
+  "url_status",
+  "custom_code",
+  "expires_on",
   "cb_01",
+  "short_url_display",
+  "copy_url_html",
+  "sb_qr",
+  "qr_size",
+  "logo",
+  "cb_qr",
   "qr_code",
-  "qr_preview"
+  "qr_preview",
+  "qr_download_html",
+  "sb_analytics",
+  "click_count",
+  "last_clicked",
+  "created_on",
+  "sb_system",
+  "short_url",
+  "route",
+  "published"
  ],
  "fields": [
   {
@@ -28,8 +42,50 @@
    "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Long URL",
-   "options": "URL",
    "reqd": 1
+  },
+  {
+   "fieldname": "url_status",
+   "fieldtype": "HTML",
+   "label": "URL Status"
+  },
+  {
+   "description": "Optional: Enter a custom short code (3-20 characters, letters, numbers, and hyphens only)",
+   "fieldname": "custom_code",
+   "fieldtype": "Data",
+   "label": "Custom Short Code"
+  },
+  {
+   "description": "Leave empty for no expiration",
+   "fieldname": "expires_on",
+   "fieldtype": "Datetime",
+   "label": "Expires On"
+  },
+  {
+   "fieldname": "cb_01",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "short_url_display",
+   "fieldtype": "HTML",
+   "label": "Short URL"
+  },
+  {
+   "fieldname": "copy_url_html",
+   "fieldtype": "HTML",
+   "label": "Copy URL"
+  },
+  {
+   "fieldname": "sb_qr",
+   "fieldtype": "Section Break",
+   "label": "QR Code"
+  },
+  {
+   "default": "Medium",
+   "fieldname": "qr_size",
+   "fieldtype": "Select",
+   "label": "QR Code Size",
+   "options": "Small\nMedium\nLarge"
   },
   {
    "fieldname": "logo",
@@ -37,8 +93,63 @@
    "label": "Logo"
   },
   {
+   "fieldname": "cb_qr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "qr_code",
+   "fieldtype": "Attach Image",
+   "label": "QR Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qr_preview",
+   "fieldtype": "HTML",
+   "in_preview": 1,
+   "label": "QR Preview",
+   "read_only": 1
+  },
+  {
+   "fieldname": "qr_download_html",
+   "fieldtype": "HTML",
+   "label": "Download QR"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_analytics",
+   "fieldtype": "Section Break",
+   "label": "Analytics"
+  },
+  {
+   "default": "0",
+   "fieldname": "click_count",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Click Count",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_clicked",
+   "fieldtype": "Datetime",
+   "label": "Last Clicked",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_on",
+   "fieldtype": "Date",
+   "label": "Created On",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sb_system",
+   "fieldtype": "Section Break",
+   "label": "System"
+  },
+  {
    "fieldname": "short_url",
    "fieldtype": "Data",
+   "hidden": 1,
    "is_virtual": 1,
    "label": "Short URL",
    "length": 50
@@ -57,30 +168,13 @@
    "hidden": 1,
    "label": "published",
    "read_only": 1
-  },
-  {
-   "fieldname": "qr_code",
-   "fieldtype": "Attach Image",
-   "label": "QR Code"
-  },
-  {
-   "fieldname": "qr_preview",
-   "fieldtype": "HTML",
-   "hidden": 1,
-   "in_preview": 1,
-   "label": "QR Preview",
-   "read_only": 1
-  },
-  {
-   "fieldname": "cb_01",
-   "fieldtype": "Column Break"
   }
  ],
  "has_web_view": 1,
  "image_field": "qr_code",
  "is_published_field": "published",
  "links": [],
- "modified": "2024-03-13 21:15:22.178826",
+ "modified": "2026-01-14 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
