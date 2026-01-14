@@ -52,6 +52,7 @@ def get_qrcode(input_data, logo=None, size="Medium"):
 
     qr = qrcode.QRCode(
         version=config["version"],
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=config["box_size"],
         border=3
     )
@@ -105,6 +106,7 @@ def get_qrcode_binary(input_data, logo=None, size="Medium"):
 
     qr = qrcode.QRCode(
         version=config["version"],
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
         box_size=config["box_size"],
         border=3
     )

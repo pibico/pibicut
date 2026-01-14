@@ -15,17 +15,9 @@ from pibicut.pibicut.custom import get_qrcode
 
 class Shortener(WebsiteGenerator):
     def autoname(self):
-        """Generate name from custom code or random string."""
+        """Generate name from custom code or random string for NEW documents."""
         if self.custom_code:
-            # Validate custom code format
-            if not re.match(r'^[a-zA-Z0-9\-]{3,20}$', self.custom_code):
-                frappe.throw(_("Custom code must be 3-20 characters, using only letters, numbers, and hyphens"))
-
-            # Check if custom code already exists
-            existing = frappe.db.exists("Shortener", self.custom_code)
-            if existing:
-                frappe.throw(_("Custom code '{0}' is already taken").format(self.custom_code))
-
+            self._validate_custom_code(self.custom_code)
             self.name = self.custom_code
         else:
             # Generate random 5-character code
@@ -33,6 +25,14 @@ class Shortener(WebsiteGenerator):
             while frappe.db.exists("Shortener", random_code):
                 random_code = random_string(5)
             self.name = random_code
+
+    def _validate_custom_code(self, code, check_exists=True):
+        """Validate custom code format and availability."""
+        if not re.match(r'^[a-zA-Z0-9\-]{3,20}$', code):
+            frappe.throw(_("Custom code must be 3-20 characters, using only letters, numbers, and hyphens"))
+
+        if check_exists and frappe.db.exists("Shortener", code):
+            frappe.throw(_("Custom code '{0}' is already taken").format(code))
 
     @property
     def short_url(self):
@@ -71,6 +71,26 @@ class Shortener(WebsiteGenerator):
         self.qr_code = get_qrcode(qr_code, logo, size)
         self.published = True
         self.route = url_short
+
+    def on_update(self):
+        """Handle custom code change for EXISTING documents."""
+        # Check if custom_code was set/changed and differs from current name
+        if self.custom_code and self.custom_code != self.name:
+            self._validate_custom_code(self.custom_code)
+
+            old_name = self.name
+            new_name = self.custom_code
+
+            # Rename the document
+            frappe.rename_doc("Shortener", old_name, new_name, force=True)
+
+            # Update route and QR code with new name
+            doc = frappe.get_doc("Shortener", new_name)
+            doc.route = new_name
+            doc.qr_code = get_qrcode(get_url(new_name), None, doc.qr_size or "Medium")
+            doc.db_update()
+
+            frappe.msgprint(_("Short URL renamed to: {0}").format(get_url(new_name)))
 
     def get_context(self, context):
         """Handle redirect with click tracking and expiration check."""

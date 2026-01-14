@@ -204,7 +204,7 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
+ "quick_entry": 0,
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
