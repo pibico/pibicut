@@ -12,7 +12,7 @@ frappe.ui.form.on('Shortener', {
             // Show short URL prominently
             let short_url = window.location.origin + '/' + frm.doc.name;
             let url_html = `
-                <div style="margin-bottom: 10px;">
+                <div style="margin-bottom: 10px;margin-top: 10px;">
                     <a href="${short_url}" target="_blank" style="font-size: 16px; font-weight: bold; color: var(--primary-color);">
                         ${short_url}
                     </a>

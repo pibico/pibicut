@@ -33,26 +33,35 @@ PibiCut is a simple Frappe App to create shortened URLs and generate QR codes. W
 ### Core Capabilities
 
 - **URL Shortening** - Convert long URLs into 5-character short codes
+- **Custom Short Codes** - Define your own memorable short codes (3-20 chars)
+- **Custom Code Rename** - Change custom codes on existing URLs (auto-rename)
 - **QR Code Generation** - Automatic styled QR code creation for each short URL
+- **QR Code Sizes** - Choose Small, Medium, or Large QR code output
 - **Custom Logo Support** - Embed your logo in the center of QR codes
+- **Click Analytics** - Track click count and last clicked timestamp
+- **Link Expiration** - Set optional expiration dates for time-limited links
 - **Instant Redirect** - Short URLs redirect immediately to target destinations
 - **UPI Support** - Works with UPI payment links in addition to HTTP/HTTPS URLs
 - **Guest Access** - Short URLs work without authentication (public redirect pages)
+- **Bulk Export** - Export multiple QR codes as a ZIP file
 
 ### QR Code Features
 
 | Feature | Description |
 |---------|-------------|
 | **Styled Design** | Radial gradient (steelblue → black) with gapped squares |
+| **Size Options** | Small, Medium, Large output sizes |
 | **Embedded Logo** | Optional PNG image in the center of QR code |
+| **Error Correction** | Uses ERROR_CORRECT_H level for reliable logo embedding |
 | **Base64 Storage** | QR codes stored as data URLs (no separate files) |
 | **Instant Preview** | Live QR code preview in the form |
+| **Download Button** | One-click download as PNG file |
 
 ### Limitations
 
-- Short codes are 5 random characters (customizable in code)
+- Short codes are 5 random characters (or custom 3-20 chars)
 - Logo images must be PNG format with white background (not transparent)
-- QR codes are not editable after creation
+- Custom codes: letters, numbers, and hyphens only
 
 ---
 
@@ -157,16 +166,31 @@ To modify permissions, navigate to **Shortener** > **Settings** > **Role Permiss
 1. Navigate to **Shortener** in the sidebar or search bar
 2. Click **+ Add Shortener** (or **New**)
 3. Enter the **Long URL** (must start with `http://`, `https://`, or `upi:`)
-4. (Optional) Attach a **Logo** image (PNG with white background)
-5. Click **Save**
+4. (Optional) Enter a **Custom Short Code** (3-20 chars, letters/numbers/hyphens)
+5. (Optional) Set **Expires On** date for time-limited links
+6. (Optional) Select **QR Code Size** (Small/Medium/Large)
+7. (Optional) Attach a **Logo** image (PNG with white background)
+8. Click **Save**
 
 ### Result
 
 After saving, you will get:
 
-- **Short URL**: `https://yoursite.com/MnOpQ` (5-character random code)
-- **QR Code**: Styled QR code image displayed in the form
+- **Short URL**: `https://yoursite.com/MnOpQ` (random) or `https://yoursite.com/your-code` (custom)
+- **QR Code**: Styled QR code image with optional logo
+- **Copy Button**: One-click copy of short URL to clipboard
+- **Download Button**: Download QR code as PNG
 - **Web Page**: Accessing the short URL redirects to the long URL
+
+### Changing Custom Code (Existing URLs)
+
+You can change the custom code of an existing short URL:
+
+1. Open the existing Shortener document
+2. Enter a new **Custom Short Code**
+3. Click **Save**
+4. Document is renamed, QR code regenerated with logo preserved
+5. Browser automatically redirects to the new URL
 
 ### Sharing the Short URL
 
@@ -327,39 +351,55 @@ def get_qrcode(input_data, logo):
 
 | Method | Purpose |
 |--------|---------|
-| `autoname()` | Generate unique 5-char random code |
+| `autoname()` | Use custom_code or generate random 5-char code (new docs) |
+| `_validate_custom_code()` | Validate custom code format and availability |
 | `short_url` | Property returning full short URL |
 | `validate()` | Validate URL format (http/https/upi) |
-| `before_save()` | Generate QR code and set route |
+| `before_save()` | Generate QR code with logo and set route |
+| `on_update()` | Rename document if custom_code changed (existing docs) |
+| `get_context()` | Handle redirect with click tracking and expiration |
 
 **Code Flow**:
 
 ```python
 class Shortener(WebsiteGenerator):
     def autoname(self):
-        # 1. Generate random 5-character code
-        random_code = random_string(5)
+        # For NEW documents
+        if self.custom_code:
+            self._validate_custom_code(self.custom_code)
+            self.name = self.custom_code
+        else:
+            random_code = random_string(5)
+            while frappe.db.exists("Shortener", random_code):
+                random_code = random_string(5)
+            self.name = random_code
 
-        # 2. Check uniqueness
-        if frappe.get_value("Shortener", {"route": random_code}, "name"):
-            frappe.throw("Try again, generated code is repeated")
-
-        # 3. Set document name
-        self.name = random_code
-
-    def validate(self):
-        # Ensure URL starts with http, https, or upi
-        if not (self.long_url.startswith("http") or self.long_url.startswith("upi")):
-            frappe.throw("Please enter a proper URL or UPI")
+    def on_update(self):
+        # For EXISTING documents - rename if custom_code changed
+        if self.custom_code and self.custom_code != self.name:
+            self._validate_custom_code(self.custom_code)
+            frappe.rename_doc("Shortener", self.name, self.custom_code)
+            # Regenerate QR with logo
+            doc = frappe.get_doc("Shortener", self.custom_code)
+            doc.qr_code = get_qrcode(get_url(self.custom_code), logo, size)
+            doc.db_update()
 
     def before_save(self):
-        # 1. Generate QR code
-        qr_code_url = get_url(self.name)
-        self.qr_code = get_qrcode(qr_code_url, logo_path)
-
-        # 2. Set WebsiteGenerator fields
+        # Generate QR code with size and logo
+        self.qr_code = get_qrcode(get_url(self.name), logo_path, self.qr_size)
         self.published = True
         self.route = self.name
+
+    def get_context(self, context):
+        # Check expiration, increment click count, redirect
+        if self.expires_on and get_datetime(self.expires_on) < now_datetime():
+            context.expired = True
+            return context
+        frappe.db.set_value("Shortener", self.name, {
+            "click_count": (self.click_count or 0) + 1,
+            "last_clicked": now_datetime()
+        }, update_modified=False)
+        context.redirect_url = self.long_url
 ```
 
 #### `pibicut/pibicut/doctype/shortener/shortener.js`
@@ -368,7 +408,12 @@ class Shortener(WebsiteGenerator):
 
 **Features**:
 - QR code preview in form
-- Dynamic rendering on refresh and load
+- Short URL display with clickable link
+- Copy URL button with clipboard support
+- Download QR code as PNG button
+- Real-time URL validation indicator
+- Custom code availability check
+- Auto-redirect after custom code rename (`after_save` handler)
 
 #### `templates/shortener.html`
 
@@ -400,7 +445,13 @@ class Shortener(WebsiteGenerator):
 | Fieldname | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `long_url` | Small Text | Yes | Original URL to redirect to |
+| `custom_code` | Data | No | User-defined short code (3-20 chars) |
+| `expires_on` | Datetime | No | Optional expiration date |
+| `qr_size` | Select | No | QR code size: Small/Medium/Large |
 | `logo` | Attach | No | Logo image to embed in QR code |
+| `click_count` | Int | - | Number of times URL was accessed |
+| `last_clicked` | Datetime | - | Timestamp of last access |
+| `created_on` | Date | - | Document creation date |
 | `short_url` | Virtual Data | - | Computed full short URL |
 | `qr_code` | Attach Image | - | Generated QR code (base64) |
 | `route` | Data | - | WebsiteGenerator route (hidden) |
@@ -417,29 +468,84 @@ def short_url(self):
 
 ### Utility Function
 
-#### `get_qrcode(input_data, logo)`
+#### `get_qrcode(input_data, logo, size)`
 
 **Location**: `pibicut.pibicut.custom`
 
-**Purpose**: Generate styled QR code
+**Purpose**: Generate styled QR code with size options
 
 **Parameters**:
 - `input_data` (str): URL to encode in QR code
 - `logo` (str|None): Path to logo image file
+- `size` (str): QR code size - "Small", "Medium", or "Large"
 
 **Returns**: `str` - Base64-encoded data URL (`data:image/png;base64,...`)
+
+**Size Configuration**:
+```python
+SIZE_CONFIG = {
+    "Small": {"box_size": 4, "version": 5},
+    "Medium": {"box_size": 6, "version": 7},
+    "Large": {"box_size": 10, "version": 7},
+}
+```
 
 **Usage**:
 
 ```python
 from pibicut.pibicut.custom import get_qrcode
 
-# Without logo
-qr = get_qrcode("https://example.com", None)
+# Without logo, medium size
+qr = get_qrcode("https://example.com", None, "Medium")
 
-# With logo
-qr = get_qrcode("https://example.com", "/path/to/logo.png")
+# With logo, large size
+qr = get_qrcode("https://example.com", "/path/to/logo.png", "Large")
 ```
+
+#### `get_qrcode_binary(input_data, logo, size)`
+
+**Location**: `pibicut.pibicut.custom`
+
+**Purpose**: Generate styled QR code as binary data (for ZIP export)
+
+**Parameters**: Same as `get_qrcode()`
+
+**Returns**: `bytes` - Binary PNG image data
+
+### API Endpoints (`pibicut.pibicut.api`)
+
+#### `check_custom_code(code)`
+
+Check if a custom short code is available.
+
+**Parameters**:
+- `code` (str): The custom code to check
+
+**Returns**: `dict` with `available` (bool) and `message` (str)
+
+#### `validate_url(url)`
+
+Validate URL format and optionally check if reachable.
+
+**Parameters**:
+- `url` (str): The URL to validate
+
+**Returns**: `dict` with `valid` (bool) and `message` (str)
+
+#### `export_qr_codes_zip(shortener_names)`
+
+Export multiple QR codes as a ZIP file.
+
+**Parameters**:
+- `shortener_names` (list): List of Shortener document names
+
+**Returns**: `dict` with `success`, `file_url`, `filename`, `count`
+
+#### `get_shortener_stats()`
+
+Get statistics about all shorteners.
+
+**Returns**: `dict` with `total`, `total_clicks`, `active`, `expired`, `most_clicked`, `recent`
 
 ---
 

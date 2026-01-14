@@ -66,9 +66,13 @@ class Shortener(WebsiteGenerator):
                 is_private=logo_files[0].is_private
             )
 
-        # Generate QR code with size option
+        # Generate QR code with size and style options
         size = self.qr_size if self.qr_size else "Medium"
-        self.qr_code = get_qrcode(qr_code, logo, size)
+        module_style = self.qr_module_style if self.qr_module_style else "Gapped Square"
+        eye_style = self.qr_eye_style if self.qr_eye_style else "Square"
+        module_color = self.qr_module_color if self.qr_module_color else "#4682B4"
+        eye_color = self.qr_eye_color if self.qr_eye_color else "#000000"
+        self.qr_code = get_qrcode(qr_code, logo, size, module_style, eye_style, module_color, eye_color)
         self.published = True
         self.route = url_short
 
@@ -104,8 +108,16 @@ class Shortener(WebsiteGenerator):
                     is_private=logo_files[0].is_private
                 )
 
-            # Regenerate QR code with logo
-            doc.qr_code = get_qrcode(get_url(new_name), logo, doc.qr_size or "Medium")
+            # Regenerate QR code with logo and style options
+            doc.qr_code = get_qrcode(
+                get_url(new_name),
+                logo,
+                doc.qr_size or "Medium",
+                doc.qr_module_style or "Gapped Square",
+                doc.qr_eye_style or "Square",
+                doc.qr_module_color or "#4682B4",
+                doc.qr_eye_color or "#000000"
+            )
             doc.db_update()
 
             # Notify client about the rename for redirect

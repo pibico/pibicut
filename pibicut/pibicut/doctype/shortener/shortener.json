@@ -13,23 +13,32 @@
   "custom_code",
   "expires_on",
   "cb_01",
+  "qr_preview",
   "short_url_display",
   "copy_url_html",
   "sb_qr",
   "qr_size",
-  "logo",
-  "cb_qr",
-  "qr_code",
-  "qr_preview",
+  "qr_module_style",
+  "qr_eye_style",
+  "cb_qr_colors",
+  "qr_module_color",
+  "qr_eye_color",
   "qr_download_html",
+  "cb_qr",
+  "logo",
   "sb_analytics",
   "click_count",
+  "column_break_vdxe",
   "last_clicked",
+  "column_break_uodd",
   "created_on",
   "sb_system",
   "short_url",
+  "published",
+  "column_break_pirl",
   "route",
-  "published"
+  "raw_tab",
+  "qr_code"
  ],
  "fields": [
   {
@@ -86,6 +95,40 @@
    "fieldtype": "Select",
    "label": "QR Code Size",
    "options": "Small\nMedium\nLarge"
+  },
+  {
+   "default": "Gapped Square",
+   "description": "Style for the QR code body dots",
+   "fieldname": "qr_module_style",
+   "fieldtype": "Select",
+   "label": "Dot Style",
+   "options": "Square\nGapped Square\nCircle\nRounded\nVertical Bars\nHorizontal Bars"
+  },
+  {
+   "default": "Square",
+   "description": "Style for the modules within corner finder patterns (eyes)",
+   "fieldname": "qr_eye_style",
+   "fieldtype": "Select",
+   "label": "Eye Style",
+   "options": "Square\nGapped Square\nCircle\nRounded\nVertical Bars\nHorizontal Bars"
+  },
+  {
+   "fieldname": "cb_qr_colors",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#4682B4",
+   "description": "Color for QR code body dots",
+   "fieldname": "qr_module_color",
+   "fieldtype": "Color",
+   "label": "Dot Color"
+  },
+  {
+   "default": "#000000",
+   "description": "Color for QR code corner eyes",
+   "fieldname": "qr_eye_color",
+   "fieldtype": "Color",
+   "label": "Eye Color"
   },
   {
    "fieldname": "logo",
@@ -168,13 +211,30 @@
    "hidden": 1,
    "label": "published",
    "read_only": 1
+  },
+  {
+   "fieldname": "raw_tab",
+   "fieldtype": "Tab Break",
+   "label": "Raw"
+  },
+  {
+   "fieldname": "column_break_vdxe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_uodd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_pirl",
+   "fieldtype": "Column Break"
   }
  ],
  "has_web_view": 1,
  "image_field": "qr_code",
  "is_published_field": "published",
  "links": [],
- "modified": "2026-01-14 21:00:00.000000",
+ "modified": "2026-01-14 21:57:33.935941",
  "modified_by": "Administrator",
  "module": "Pibicut",
  "name": "Shortener",
@@ -204,7 +264,7 @@
    "write": 1
   }
  ],
- "quick_entry": 0,
+ "row_format": "Dynamic",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
